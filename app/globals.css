@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  color: #0b0b0f;
+  background: radial-gradient(1200px 800px at 20% 10%, #ff6bcb 0%, rgba(255, 107, 203, 0) 60%),
+    radial-gradient(900px 700px at 90% 30%, #5de1ff 0%, rgba(93, 225, 255, 0) 55%),
+    radial-gradient(1200px 900px at 40% 110%, #b7ff5a 0%, rgba(183, 255, 90, 0) 55%),
+    linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
+}
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+}
+
+.card {
+  width: min(980px, 100%);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.cardInner {
+  padding: 24px;
+}
+
+.muted {
+  color: rgba(11, 11, 15, 0.65);
+}
+
+.btn {
+  appearance: none;
+  border: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #0b0b0f;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  background: rgba(11, 11, 15, 0.08);
+  color: #0b0b0f;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.slidesShell {
+  height: min(640px, 78vh);
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.slideViewport {
+  position: relative;
+  overflow: hidden;
+}
+
+.slide {
+  height: 100%;
+  padding: 28px;
+  display: grid;
+  align-content: center;
+  gap: 14px;
+}
+
+.headline {
+  font-size: clamp(28px, 4.5vw, 54px);
+  line-height: 1.02;
+  margin: 0;
+}
+
+.bigNumber {
+  font-size: clamp(44px, 7vw, 88px);
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(11, 11, 15, 0.06);
+  color: rgba(11, 11, 15, 0.7);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.footerNav {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.dots {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(11, 11, 15, 0.18);
+}
+
+.dotActive {
+  background: rgba(11, 11, 15, 0.8);
+}
+
