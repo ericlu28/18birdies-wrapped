@@ -1,0 +1,14 @@
+{
+  "name": "18birdies-wrapped",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "aggregate": "tsx src/aggregate.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
+

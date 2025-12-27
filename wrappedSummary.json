@@ -1,0 +1,328 @@
+{
+  "schemaVersion": "1",
+  "generatedAt": "2025-12-27T03:02:50.139Z",
+  "profile": {
+    "userId": "b3615950-e35c-11eb-817d-029b90f35a4e",
+    "userName": "Eric Lu"
+  },
+  "rounds": {
+    "totalFromArchive": 75,
+    "totalIncluded": 68,
+    "byMonthUtc": {
+      "2021-07": 4,
+      "2021-08": 2,
+      "2021-09": 2,
+      "2021-11": 1,
+      "2022-01": 1,
+      "2023-12": 1,
+      "2024-01": 1,
+      "2024-03": 1,
+      "2024-04": 1,
+      "2024-07": 13,
+      "2024-08": 4,
+      "2024-09": 3,
+      "2024-10": 1,
+      "2024-11": 3,
+      "2024-12": 1,
+      "2025-01": 2,
+      "2025-02": 3,
+      "2025-03": 1,
+      "2025-04": 1,
+      "2025-05": 2,
+      "2025-06": 1,
+      "2025-07": 3,
+      "2025-08": 5,
+      "2025-09": 1,
+      "2025-10": 2,
+      "2025-11": 4,
+      "2025-12": 4
+    },
+    "firstRoundAt": "2021-07-12T22:51:12.604Z",
+    "lastRoundAt": "2025-12-14T20:21:16.217Z"
+  },
+  "strokes": {
+    "average": 83.94117647058823,
+    "bestRound": {
+      "id": "1d3394b0-ea8e-11ef-b0eb-0ab15c307481",
+      "timestamp": 1739508155734,
+      "timestampIso": "2025-02-14T04:42:35.734Z",
+      "clubId": "8e4941a0-86ac-11e4-8c28-020000005b00",
+      "clubName": "Grass Clippings at Rolling Hills Golf Course",
+      "strokes": 6,
+      "score": 3
+    },
+    "worstRound": {
+      "id": "37814e90-3b23-11ef-9454-029b90f35a4e",
+      "timestamp": 1720220790633,
+      "timestampIso": "2024-07-05T23:06:30.633Z",
+      "clubId": "8997a070-86ac-11e4-8c28-020000005b00",
+      "clubName": "Arrowood Golf Course",
+      "strokes": 117,
+      "score": 46
+    }
+  },
+  "score": {
+    "average": 24.779411764705884,
+    "bestRound": {
+      "id": "3b3d5680-3e89-11ec-86c2-029b90f35a4e",
+      "timestamp": 1636151965257,
+      "timestampIso": "2021-11-05T22:39:25.257Z",
+      "clubId": "88c92ce0-86ac-11e4-8c28-020000005b00",
+      "clubName": "Tilden Park Golf Course",
+      "strokes": 25,
+      "score": 2
+    },
+    "worstRound": {
+      "id": "37814e90-3b23-11ef-9454-029b90f35a4e",
+      "timestamp": 1720220790633,
+      "timestampIso": "2024-07-05T23:06:30.633Z",
+      "clubId": "8997a070-86ac-11e4-8c28-020000005b00",
+      "clubName": "Arrowood Golf Course",
+      "strokes": 117,
+      "score": 46
+    }
+  },
+  "statsTotals": {
+    "birdies": 7,
+    "pars": 103,
+    "bogeys": 303,
+    "doubleBogeyOrWorse": 483,
+    "putts": 956,
+    "puttsAvgPerRoundWithPutts": 21.727272727272727,
+    "fairwayHitRate": 0.23983739837398374,
+    "girRate": 0.07246376811594203
+  },
+  "courses": {
+    "mostPlayed": {
+      "clubId": "8a0137b0-86ac-11e4-8c28-020000005b00",
+      "name": "Rancho Bernardo Inn Golf Course",
+      "roundsPlayed": 8
+    },
+    "items": [
+      {
+        "clubId": "8a0137b0-86ac-11e4-8c28-020000005b00",
+        "name": "Rancho Bernardo Inn Golf Course",
+        "roundsPlayed": 8,
+        "avgStrokes": 92.125,
+        "avgScore": 29.125
+      },
+      {
+        "clubId": "8a0c3430-86ac-11e4-8c28-020000005b00",
+        "name": "TPC Harding Park",
+        "roundsPlayed": 7,
+        "avgStrokes": 83.28571428571429,
+        "avgScore": 23.714285714285715
+      },
+      {
+        "clubId": "8a824e90-86ac-11e4-8c28-020000005b00",
+        "name": "Encinitas Ranch",
+        "roundsPlayed": 7,
+        "avgStrokes": 71.71428571428571,
+        "avgScore": 21.428571428571427
+      },
+      {
+        "clubId": "8a0b49d0-86ac-11e4-8c28-020000005b00",
+        "name": "Lincoln Park Golf Course",
+        "roundsPlayed": 4,
+        "avgStrokes": 94.75,
+        "avgScore": 26.75
+      },
+      {
+        "clubId": "88c92ce0-86ac-11e4-8c28-020000005b00",
+        "name": "Tilden Park Golf Course",
+        "roundsPlayed": 3,
+        "avgStrokes": 40.333333333333336,
+        "avgScore": 9.333333333333334
+      },
+      {
+        "clubId": "8ac487b0-86ac-11e4-8c28-020000005b00",
+        "name": "Presidio Golf Course",
+        "roundsPlayed": 3,
+        "avgStrokes": 97,
+        "avgScore": 25
+      },
+      {
+        "clubId": "8a184220-86ac-11e4-8c28-020000005b00",
+        "name": "Peacock Gap Golf Club",
+        "roundsPlayed": 3,
+        "avgStrokes": 95.66666666666667,
+        "avgScore": 24.666666666666668
+      },
+      {
+        "clubId": "8ad613e0-86ac-11e4-8c28-020000005b00",
+        "name": "Mission Trails Golf Course",
+        "roundsPlayed": 2,
+        "avgStrokes": 101.5,
+        "avgScore": 30.5
+      },
+      {
+        "clubId": "8a033380-86ac-11e4-8c28-020000005b00",
+        "name": "Balboa Park",
+        "roundsPlayed": 2,
+        "avgStrokes": 101.5,
+        "avgScore": 29.5
+      },
+      {
+        "clubId": "8998d8f0-86ac-11e4-8c28-020000005b00",
+        "name": "El Camino Country Club",
+        "roundsPlayed": 2,
+        "avgStrokes": 105,
+        "avgScore": 33
+      },
+      {
+        "clubId": "8acfab40-86ac-11e4-8c28-020000005b00",
+        "name": "The Golf Club of California",
+        "roundsPlayed": 2,
+        "avgStrokes": 83,
+        "avgScore": 29
+      },
+      {
+        "clubId": "889d8900-86ac-11e4-8c28-020000005b00",
+        "name": "Corica Park",
+        "roundsPlayed": 2,
+        "avgStrokes": 66.5,
+        "avgScore": 18.5
+      },
+      {
+        "clubId": "8a1d2420-86ac-11e4-8c28-020000005b00",
+        "name": "Pruneridge Golf Club",
+        "roundsPlayed": 2,
+        "avgStrokes": 38.5,
+        "avgScore": 8.5
+      },
+      {
+        "clubId": "8a62dfb0-86ac-11e4-8c28-020000005b00",
+        "name": "Dos Osos Golf Club",
+        "roundsPlayed": 2,
+        "avgStrokes": 109,
+        "avgScore": 37
+      },
+      {
+        "clubId": "e37ac490-f19e-11e7-960e-0680a328ea36",
+        "name": "TPC Harding Park - Fleming 9",
+        "roundsPlayed": 2,
+        "avgStrokes": 39,
+        "avgScore": 9
+      },
+      {
+        "clubId": "8a1498a0-86ac-11e4-8c28-020000005b00",
+        "name": "Monarch Bay Golf Club",
+        "roundsPlayed": 1,
+        "avgStrokes": 74,
+        "avgScore": 19
+      },
+      {
+        "clubId": "888ee300-86ac-11e4-8c28-020000005b00",
+        "name": "Cimarron Golf Resort",
+        "roundsPlayed": 1,
+        "avgStrokes": 100,
+        "avgScore": 29
+      },
+      {
+        "clubId": "8ac15360-86ac-11e4-8c28-020000005b00",
+        "name": "Berkeley Country Club",
+        "roundsPlayed": 1,
+        "avgStrokes": 104,
+        "avgScore": 32
+      },
+      {
+        "clubId": "8d5fcc00-86ac-11e4-8c28-020000005b00",
+        "name": "Foxcliff Golf Club",
+        "roundsPlayed": 1,
+        "avgStrokes": 100,
+        "avgScore": 28
+      },
+      {
+        "clubId": "41ad2a80-6f4e-11e8-b410-0680a328ea36",
+        "name": "The Vineyard at Escondido",
+        "roundsPlayed": 1,
+        "avgStrokes": 53,
+        "avgScore": 21
+      },
+      {
+        "clubId": "8997a070-86ac-11e4-8c28-020000005b00",
+        "name": "Arrowood Golf Course",
+        "roundsPlayed": 1,
+        "avgStrokes": 117,
+        "avgScore": 46
+      },
+      {
+        "clubId": "89dc4a90-86ac-11e4-8c28-020000005b00",
+        "name": "Mt. Woodson Golf Club",
+        "roundsPlayed": 1,
+        "avgStrokes": 112,
+        "avgScore": 42
+      },
+      {
+        "clubId": "8a63f120-86ac-11e4-8c28-020000005b00",
+        "name": "Native Oaks Golf Club",
+        "roundsPlayed": 1,
+        "avgStrokes": 99,
+        "avgScore": 27
+      },
+      {
+        "clubId": "89b820c0-86ac-11e4-8c28-020000005b00",
+        "name": "Sharp Park Golf Course",
+        "roundsPlayed": 1,
+        "avgStrokes": 105,
+        "avgScore": 33
+      },
+      {
+        "clubId": "8995a4a0-86ac-11e4-8c28-020000005b00",
+        "name": "Lake Chabot Golf Course",
+        "roundsPlayed": 1,
+        "avgStrokes": 102,
+        "avgScore": 30
+      },
+      {
+        "clubId": "899ad4c0-86ac-11e4-8c28-020000005b00",
+        "name": "Franklin Canyon Golf Course",
+        "roundsPlayed": 1,
+        "avgStrokes": 103,
+        "avgScore": 31
+      },
+      {
+        "clubId": "899667f0-86ac-11e4-8c28-020000005b00",
+        "name": "Metropolitan Golf Links",
+        "roundsPlayed": 1,
+        "avgStrokes": 100,
+        "avgScore": 28
+      },
+      {
+        "clubId": "89cabe60-86ac-11e4-8c28-020000005b00",
+        "name": "Baylands Golf Links",
+        "roundsPlayed": 1,
+        "avgStrokes": 92,
+        "avgScore": 20
+      },
+      {
+        "clubId": "8a094e00-86ac-11e4-8c28-020000005b00",
+        "name": "Gleneagles Golf Course ",
+        "roundsPlayed": 1,
+        "avgStrokes": 57,
+        "avgScore": 21
+      },
+      {
+        "clubId": "8e4941a0-86ac-11e4-8c28-020000005b00",
+        "name": "Grass Clippings at Rolling Hills Golf Course",
+        "roundsPlayed": 1,
+        "avgStrokes": 6,
+        "avgScore": 3
+      },
+      {
+        "clubId": "8e173520-86ac-11e4-8c28-020000005b00",
+        "name": "Ahwatukee Country Club",
+        "roundsPlayed": 1,
+        "avgStrokes": 99,
+        "avgScore": 27
+      },
+      {
+        "clubId": "88e148c0-86ac-11e4-8c28-020000005b00",
+        "name": "The Crossings At Carlsbad",
+        "roundsPlayed": 1,
+        "avgStrokes": 97,
+        "avgScore": 25
+      }
+    ]
+  }
+}
