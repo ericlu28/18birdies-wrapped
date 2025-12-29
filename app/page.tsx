@@ -13,7 +13,11 @@ type UiState =
 
 function monthName(ym: string): string {
   const [y, m] = ym.split("-");
-  return `${y}-${m}`;
+  const year = Number(y);
+  const month = Number(m);
+  if (!Number.isFinite(year) || !Number.isFinite(month)) return ym;
+  const d = new Date(Date.UTC(year, month - 1, 1));
+  return new Intl.DateTimeFormat(undefined, { month: "short", year: "numeric", timeZone: "UTC" }).format(d);
 }
 
 function pickBusiestMonth(byMonthUtc: Record<string, number>): { ym: string; count: number } | null {
@@ -23,8 +27,15 @@ function pickBusiestMonth(byMonthUtc: Record<string, number>): { ym: string; cou
   return { ym: entries[0]![0], count: entries[0]![1] };
 }
 
+const brand = {
+  primary: "#27ae60",
+  navy: "#0d1a26",
+  bg: "#f8faf9",
+};
+
 export default function HomePage() {
   const [ui, setUi] = useState<UiState>({ kind: "upload" });
+  const [dragActive, setDragActive] = useState(false);
 
   const slides = useMemo(() => {
     if (ui.kind !== "ready") return [];
@@ -131,60 +142,176 @@ export default function HomePage() {
     }
   }
 
+  if (ui.kind !== "ready") {
+    return (
+      <div className="landing" style={{ backgroundColor: brand.bg }}>
+        <header className="landingNav">
+          <div className="brand">
+            <div className="brandMark" style={{ backgroundColor: brand.primary }}>
+              <span className="brandMarkIcon" aria-hidden="true">
+                ⛳
+              </span>
+            </div>
+            <span className="brandName" style={{ color: brand.navy }}>
+              GolfWrapped
+            </span>
+          </div>
+        </header>
+
+        <main className="landingMain">
+          <section className="hero">
+            <h1 className="heroTitle" style={{ color: brand.navy }}>
+              Your Year in <span style={{ color: brand.primary }}>Golf.</span>
+            </h1>
+            <p className="heroSubtitle">
+              Discover your best rounds, top courses, and key stats using your 18Birdies data. Everything runs locally in
+              your browser.
+            </p>
+            <div className="heroCtas">
+              <a className="heroPrimaryBtn" href="#uploader" style={{ backgroundColor: brand.primary }}>
+                Upload My Stats <span aria-hidden="true">→</span>
+              </a>
+              <a className="heroSecondaryBtn" href="#how-it-works">
+                Learn More
+              </a>
+            </div>
+          </section>
+
+          <section className="howItWorks" id="how-it-works">
+            <h2 className="sectionTitle" style={{ color: brand.navy }}>
+              How it works
+            </h2>
+            <div className="steps">
+              <div className="stepCard">
+                <div className="stepNum" style={{ color: brand.primary }}>
+                  1
+                </div>
+                <div className="stepBody">
+                  <div className="stepTitle">Download Data</div>
+                  <div className="stepDesc">
+                    Go to the 18Birdies data portal to export your full history.
+                    <div style={{ marginTop: 8 }}>
+                      <a
+                        className="stepLink"
+                        href="https://18birdies.com/download-account-data/"
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ color: brand.primary }}
+                      >
+                        Open portal →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stepCard">
+                <div className="stepNum" style={{ color: brand.primary }}>
+                  2
+                </div>
+                <div className="stepBody">
+                  <div className="stepTitle">Upload JSON</div>
+                  <div className="stepDesc">Drag and drop your downloaded JSON file into the uploader below.</div>
+                </div>
+              </div>
+
+              <div className="stepCard">
+                <div className="stepNum" style={{ color: brand.primary }}>
+                  3
+                </div>
+                <div className="stepBody">
+                  <div className="stepTitle">See Your Year</div>
+                  <div className="stepDesc">Instantly see your GolfWrapped stats, top courses, and best rounds.</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="uploaderSection" id="uploader">
+            <h2 className="sectionTitle" style={{ color: brand.navy }}>
+              Upload JSON
+            </h2>
+            <p className="sectionSubtitle">Drag and drop your downloaded JSON file into the uploader below.</p>
+
+            <div
+              className={`uploader ${dragActive ? "uploaderActive" : ""}`}
+              onDragEnter={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setDragActive(true);
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setDragActive(true);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setDragActive(false);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setDragActive(false);
+                const f = e.dataTransfer.files?.[0];
+                if (!f) return;
+                if (f.type !== "application/json" && !f.name.toLowerCase().endsWith(".json")) {
+                  setUi({ kind: "error", message: "Please upload a valid JSON file." });
+                  return;
+                }
+                void onFile(f);
+              }}
+            >
+              <div className="uploaderInner">
+                <div className="uploaderIcon" style={{ color: brand.primary }}>
+                  ⬆︎
+                </div>
+                <div className="uploaderTitle">Drag and drop your JSON file here</div>
+                <div className="uploaderHint">or choose a file from your computer</div>
+
+                <label className="uploaderBtn" style={{ backgroundColor: brand.primary }}>
+                  Choose file
+                  <input
+                    type="file"
+                    accept="application/json,.json"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) void onFile(f);
+                    }}
+                    style={{ display: "none" }}
+                  />
+                </label>
+
+                {ui.kind === "loading" && <p className="uploaderStatus">Analyzing {ui.fileName}…</p>}
+
+                {ui.kind === "error" && (
+                  <div className="uploaderError">
+                    <div className="uploaderErrorTitle">Upload failed</div>
+                    <div className="uploaderErrorMsg">{ui.message}</div>
+                    <div style={{ marginTop: 10 }}>
+                      <button className="btn btnSecondary" onClick={() => setUi({ kind: "upload" })}>
+                        Try again
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <main className="app">
       <div className="card">
-        {ui.kind === "upload" && (
-          <div className="cardInner">
-            <p className="pill">Step 1</p>
-            <h1 className="headline">Upload your 18Birdies archive</h1>
-            <p className="muted">Choose your exported `18Birdies_archive.json` file to generate your Wrapped.</p>
-            <div className="row" style={{ marginTop: 16 }}>
-              <input
-                type="file"
-                accept="application/json,.json"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) void onFile(f);
-                }}
-              />
-            </div>
+        <div className="slidesShell">
+          <div className="slideViewport">
+            <Slides slides={slides} onReset={() => setUi({ kind: "upload" })} />
           </div>
-        )}
-
-        {ui.kind === "loading" && (
-          <div className="cardInner">
-            <p className="pill">Step 2</p>
-            <h1 className="headline">Building your Wrapped…</h1>
-            <p className="muted">Parsing and aggregating {ui.fileName}.</p>
-            <div style={{ marginTop: 18 }} className="row">
-              <button className="btn btnSecondary" onClick={() => setUi({ kind: "upload" })}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
-
-        {ui.kind === "error" && (
-          <div className="cardInner">
-            <p className="pill">Error</p>
-            <h1 className="headline">Upload failed</h1>
-            <p className="muted">{ui.message}</p>
-            <div className="row" style={{ marginTop: 16 }}>
-              <button className="btn" onClick={() => setUi({ kind: "upload" })}>
-                Try again
-              </button>
-            </div>
-          </div>
-        )}
-
-        {ui.kind === "ready" && (
-          <div className="slidesShell">
-            <div className="slideViewport">
-              <Slides slides={slides} onReset={() => setUi({ kind: "upload" })} />
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </main>
   );
