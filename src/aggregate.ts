@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Archive } from "./types.js";
 import { aggregateArchive } from "./aggregateCore.js";
+import { filterArchive } from "./filterCore.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +14,8 @@ const outputPath = path.join(repoRoot, "wrappedSummary.json");
 
 const raw = fs.readFileSync(archivePath, "utf8");
 const archive = JSON.parse(raw) as Archive;
-const summary = aggregateArchive(archive);
+const filtered = filterArchive(archive);
+const summary = aggregateArchive(filtered);
 
 fs.writeFileSync(outputPath, JSON.stringify(summary, null, 2) + "\n", "utf8");
 process.stdout.write(`Wrote ${outputPath}\n`);

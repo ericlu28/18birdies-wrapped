@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Archive, WrappedSummaryV1 } from "../src/types";
 import { aggregateArchive } from "../src/aggregateCore";
+import { filterArchive } from "../src/filterCore";
 import { Slides } from "./ui/Slides";
 
 type UiState =
@@ -135,7 +136,8 @@ export default function HomePage() {
     try {
       const text = await file.text();
       const parsed = JSON.parse(text) as Archive;
-      const summary = aggregateArchive(parsed);
+      const filtered = filterArchive(parsed);
+      const summary = aggregateArchive(filtered);
       setUi({ kind: "ready", summary, fileName: file.name });
     } catch {
       setUi({ kind: "error", message: "Could not read that file. Please upload the raw 18Birdies_archive.json export." });

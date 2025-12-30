@@ -1,0 +1,4 @@
+- add new method for "isFullRound" (18 holes of play)
+- add new method for "is9holesRound" (9 holes of play)
+- 
+- currently, wrapped summary includes all history from the start of time in JSON creation. change this to pass summarization from a passed in start date. For the wrapped purposes, we can default this to the new year 01/01/2025.
