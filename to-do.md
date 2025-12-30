@@ -10,8 +10,16 @@ Stats aggregation of wrapped.
         - Pins should be placed in time sequential order of when the course was first played that year. If a pin was already placed for that course, we can "grow the pin taller". 
     - requirements:
         - Map User Interface
-        - search mapping of golf course name/club ID to latitude/longitude value that the map UI can load to place the pins
+        - searchmapping of golf course name/club ID to latitude/longitude value that the map UI can load to place the pins
         - parse through each of the rounds played in timestamp order, and drop pins or grow the pin correspondingly.
+    - vendor:
+        - OpenStreetMap: 
+            - pro: free, simple node API
+            - con: doesn't include many courses on search functionality.
+        - Mapbox Geocoding API
+            - pro: can use both geocoding search API and the map provider functionality.
+            - cons: pay by usage.
+            - URL: https://account.mapbox.com/auth/signup/?route-to=https://docs.mapbox.com/help/dive-deeper/access-tokens/
 
 
 
