@@ -24,5 +24,7 @@ Stats aggregation of wrapped.
             - pro: best search API from text -> place
             - most expensive
 
-
-
+- Test and Filter/Clean course names further during the Google Search:
+    - for example, "Grass Clippings at Rolling Hills Golf Course" is returning 200 zero results. But,
+    "Grass Clippings Rolling Hills Golf Course" is returning 200 OK body. 
+    - Filler words like "at" confuse the query.

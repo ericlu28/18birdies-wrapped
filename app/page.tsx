@@ -5,11 +5,12 @@ import type { Archive, WrappedSummaryV1 } from "../src/types";
 import { aggregateArchive } from "../src/aggregateCore";
 import { filterArchive } from "../src/filterCore";
 import { Slides } from "./ui/Slides";
+import { MapSlide } from "./ui/MapSlide";
 
 type UiState =
   | { kind: "upload" }
   | { kind: "loading"; fileName: string }
-  | { kind: "ready"; summary: WrappedSummaryV1; fileName: string }
+  | { kind: "ready"; summary: WrappedSummaryV1; fileName: string; archive: Archive }
   | { kind: "error"; message: string };
 
 function monthName(ym: string): string {
@@ -125,6 +126,10 @@ export default function HomePage() {
           </>
         ),
       },
+      {
+        title: "Course map",
+        body: <MapSlide archive={ui.archive} />,
+      },
     ];
   }, [ui]);
 
@@ -138,7 +143,7 @@ export default function HomePage() {
       const parsed = JSON.parse(text) as Archive;
       const filtered = filterArchive(parsed);
       const summary = aggregateArchive(filtered);
-      setUi({ kind: "ready", summary, fileName: file.name });
+      setUi({ kind: "ready", summary, fileName: file.name, archive: filtered });
     } catch {
       setUi({ kind: "error", message: "Could not read that file. Please upload the raw 18Birdies_archive.json export." });
     }
