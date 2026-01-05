@@ -20,6 +20,9 @@ Stats aggregation of wrapped.
             - pro: can use both geocoding search API and the map provider functionality.
             - cons: pay by usage.
             - URL: https://account.mapbox.com/auth/signup/?route-to=https://docs.mapbox.com/help/dive-deeper/access-tokens/
+        - Google Geocoding API
+            - pro: best search API from text -> place
+            - most expensive
 
 
 
