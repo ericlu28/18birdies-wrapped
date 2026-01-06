@@ -56,7 +56,7 @@ export default function HomePage() {
             <p className="pill">Local-only • Your data stays in your browser</p>
             <h1 className="headline">{summary.profile.userName ?? "Your"} season recap</h1>
             <p className="muted">
-              {years ? `Highlights from ${years}.` : "Highlights from your rounds."} (source: {ui.fileName})
+              {years ? `Highlights from your ${years}.` : "Highlights from your rounds."}
             </p>
           </>
         ),

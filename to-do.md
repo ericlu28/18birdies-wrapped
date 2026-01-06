@@ -3,28 +3,14 @@ Stats aggregation of wrapped.
 - add new method for "is9holesRound" (9 holes of play)
 - currently, wrapped summary includes all history from the start of time in JSON creation. change this to pass summarization from a passed in start date. For the wrapped purposes, we can default this to the new year 01/01/2025.
 
+- Calendar Slide Feature
+    - highlights on top of the page:
+        - total rounds played over the calendar year
+        - busiest couple of months
+    - Calendar UI that displays the rounds played on a calendar, indicating particular months and weekends that had high activity.
+        - when user hovers a month on the calendar, display the average of the month.
 
 
-- Wrapped Features
-    - Map of pins around the United States coming down of all courses played. 
-        - Pins should be placed in time sequential order of when the course was first played that year. If a pin was already placed for that course, we can "grow the pin taller". 
-    - requirements:
-        - Map User Interface
-        - searchmapping of golf course name/club ID to latitude/longitude value that the map UI can load to place the pins
-        - parse through each of the rounds played in timestamp order, and drop pins or grow the pin correspondingly.
-    - vendor:
-        - OpenStreetMap: 
-            - pro: free, simple node API
-            - con: doesn't include many courses on search functionality.
-        - Mapbox Geocoding API
-            - pro: can use both geocoding search API and the map provider functionality.
-            - cons: pay by usage.
-            - URL: https://account.mapbox.com/auth/signup/?route-to=https://docs.mapbox.com/help/dive-deeper/access-tokens/
-        - Google Geocoding API
-            - pro: best search API from text -> place
-            - most expensive
-
-- Test and Filter/Clean course names further during the Google Search:
-    - for example, "Grass Clippings at Rolling Hills Golf Course" is returning 200 zero results. But,
-    "Grass Clippings Rolling Hills Golf Course" is returning 200 OK body. 
-    - Filler words like "at" confuse the query.
+- Map Slide Feature enhancements
+    - add a legend on the right-hand side of the slide that has the course name and a count of how many rounds have been played at it. 
+        - when the pin is hovered on, we also highlight that course in the legend, and bring up above the pin a descriptor with the course name, rounds played, average score, best score, worst score.
