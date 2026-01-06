@@ -7,6 +7,9 @@ import cacheJson from "../../data/courseCoordinates.json";
 
 type CourseCoord = { lat: number; lng: number; name?: string; source?: string };
 type CacheShape = Record<string, CourseCoord>;
+type LocalCacheEntry =
+  | { lat: number; lng: number; name?: string; source?: string; updatedAt?: number }
+  | { missing: true; name?: string; updatedAt?: number };
 
 type GeocodeResponse = {
   clubId: string | null;
@@ -76,6 +79,27 @@ export function MapSlide({ archive }: { archive: Archive }) {
     let cancelled = false;
     const coords = new Map<ClubId, { lat: number; lng: number }>();
     const cache = cacheJson as CacheShape;
+    const LS_KEY = "golfwrapped_course_coords_v1";
+
+    const localCache: Record<string, LocalCacheEntry> = (() => {
+      try {
+        const raw = window.localStorage.getItem(LS_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw) as unknown;
+        if (!parsed || typeof parsed !== "object") return {};
+        return parsed as Record<string, LocalCacheEntry>;
+      } catch {
+        return {};
+      }
+    })();
+
+    function persistLocalCache() {
+      try {
+        window.localStorage.setItem(LS_KEY, JSON.stringify(localCache));
+      } catch {
+        // ignore (storage may be full/blocked)
+      }
+    }
 
     async function resolveAll() {
       try {
@@ -84,6 +108,20 @@ export function MapSlide({ archive }: { archive: Archive }) {
         let done = 0;
         for (const c of uniqueCourseIdsInOrder) {
           if (cancelled) return;
+
+          const local = localCache[c.clubId];
+          if (local && "missing" in local) {
+            console.warn(`[MapSlide] Previously missing geocode for ${c.clubName} (${c.clubId}); skipping.`);
+            done += 1;
+            setStatus({ kind: "resolving", done, total: uniqueCourseIdsInOrder.length });
+            continue;
+          }
+          if (local && "lat" in local && typeof local.lat === "number" && typeof local.lng === "number") {
+            coords.set(c.clubId, { lat: local.lat, lng: local.lng });
+            done += 1;
+            setStatus({ kind: "resolving", done, total: uniqueCourseIdsInOrder.length });
+            continue;
+          }
 
           const cached = cache[c.clubId];
           if (cached && typeof cached.lat === "number" && typeof cached.lng === "number") {
@@ -103,6 +141,8 @@ export function MapSlide({ archive }: { archive: Archive }) {
             if (res.status === 404) {
               // No geocode results for this course name; skip it.
               console.warn(`[MapSlide] No geocode results for ${c.clubName} (${c.clubId}); skipping.`);
+              localCache[c.clubId] = { missing: true, name: c.clubName, updatedAt: Date.now() };
+              persistLocalCache();
               done += 1;
               setStatus({ kind: "resolving", done, total: uniqueCourseIdsInOrder.length });
               continue;
@@ -113,6 +153,8 @@ export function MapSlide({ archive }: { archive: Archive }) {
 
           const data = (await res.json()) as GeocodeResponse;
           coords.set(c.clubId, { lat: data.lat, lng: data.lng });
+          localCache[c.clubId] = { lat: data.lat, lng: data.lng, name: c.clubName, source: "google", updatedAt: Date.now() };
+          persistLocalCache();
           done += 1;
           setStatus({ kind: "resolving", done, total: uniqueCourseIdsInOrder.length });
         }

@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { getGoogleGeocodingApiKey } from "../../../src/envServer";
+import { Client } from "@googlemaps/google-maps-services-js";
+
+export const runtime = "nodejs";
+
+const client = new Client({});
 
 type GeocodeRequestBody = {
   clubId?: string;
@@ -33,20 +38,15 @@ export async function POST(req: Request) {
 
   const key = getGoogleGeocodingApiKey();
 
-  const url = new URL("https://maps.googleapis.com/maps/api/geocode/json");
-  url.searchParams.set("address", name);
-  url.searchParams.set("key", key);
-
   let data: GoogleGeocodeResponse;
   try {
-    const res = await fetch(url.toString(), {
-      method: "GET",
-      headers: { accept: "application/json" },
-      // Avoid accidental caching of API responses by intermediaries
-      cache: "no-store",
+    const gcResponse = await client.geocode({
+      params: {
+        key,
+        address: name,
+      },
     });
-
-    data = (await res.json()) as GoogleGeocodeResponse;
+    data = gcResponse.data as unknown as GoogleGeocodeResponse;
   } catch {
     return NextResponse.json({ error: "Failed to call Google Geocoding API" }, { status: 502 });
   }
