@@ -147,6 +147,16 @@ export function MapSlide({ archive }: { archive: Archive }) {
               setStatus({ kind: "resolving", done, total: uniqueCourseIdsInOrder.length });
               continue;
             }
+            if (res.status === 502) {
+              // Transient geocode failure for this course; don't surface to the client UI.
+              const text = await res.text().catch(() => "");
+              console.warn(`[MapSlide] Geocode failed for ${c.clubName} (${c.clubId}): ${res.status} ${text}; skipping.`);
+              localCache[c.clubId] = { missing: true, name: c.clubName, updatedAt: Date.now() };
+              persistLocalCache();
+              done += 1;
+              setStatus({ kind: "resolving", done, total: uniqueCourseIdsInOrder.length });
+              continue;
+            }
             const text = await res.text().catch(() => "");
             throw new Error(`Geocode failed for ${c.clubName} (${c.clubId}): ${res.status} ${text}`);
           }
@@ -242,7 +252,7 @@ export function MapSlide({ archive }: { archive: Archive }) {
 
   return (
     <div style={{ display: "grid", gap: 12 }}>
-      <div className="pill">2025 course map</div>
+      <div className="pill">2025 WrappedMap</div>
 
       {status.kind === "resolving" && (
         <div className="muted">

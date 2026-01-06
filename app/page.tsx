@@ -218,7 +218,27 @@ export default function HomePage() {
                 </div>
                 <div className="stepBody">
                   <div className="stepTitle">Upload JSON</div>
-                  <div className="stepDesc">Drag and drop your downloaded JSON file into the uploader below.</div>
+                  <div className="stepDesc">
+                    Drag and drop your downloaded JSON file into the uploader below.
+                    <div style={{ marginTop: 6 }}>
+                      File should be called:{" "}
+                      <span
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                          fontSize: 13,
+                          padding: "2px 8px",
+                          borderRadius: 999,
+                          background: "rgba(0,0,0,0.06)",
+                          color: brand.navy,
+                          border: "1px solid rgba(0,0,0,0.08)",
+                          display: "inline-block",
+                        }}
+                      >
+                        18Birdies_archive.json
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -228,7 +248,7 @@ export default function HomePage() {
                 </div>
                 <div className="stepBody">
                   <div className="stepTitle">See Your Year</div>
-                  <div className="stepDesc">Instantly see your GolfWrapped stats, top courses, and best rounds.</div>
+                  <div className="stepDesc">Instantly see your GolfWrapped stats, top courses, best rounds, and your WrappedMap.</div>
                 </div>
               </div>
             </div>

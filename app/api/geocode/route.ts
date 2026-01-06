@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getGoogleGeocodingApiKey } from "../../../src/envServer";
 import { Client } from "@googlemaps/google-maps-services-js";
-import { getGeocodeCacheByClubId, upsertGeocodeCacheHit, upsertGeocodeCacheMissing } from "../../../src/geocodeCacheDb";
 
 export const runtime = "nodejs";
 
@@ -44,26 +43,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing required field: clubId" }, { status: 400 });
   }
 
-  const cached = getGeocodeCacheByClubId(clubId);
-  if (cached?.kind === "hit") {
-    return NextResponse.json({
-      clubId,
-      name: cached.name ?? name,
-      lat: cached.lat,
-      lng: cached.lng,
-      formattedAddress: cached.formattedAddress,
-      placeId: cached.placeId,
-      cached: true,
-    });
-  }
-  if (cached?.kind === "missing") {
-    return NextResponse.json({ error: "No geocoding results (cached)" }, { status: 404 });
-  }
-
   const key = getGoogleGeocodingApiKey();
 
   let data: GoogleGeocodeResponse;
   try {
+    console.info("[geocode] request", { clubId, address: name });
     const gcResponse = await client.geocode({
       params: {
         key,
@@ -71,12 +55,28 @@ export async function POST(req: Request) {
       },
     });
     data = gcResponse.data as unknown as GoogleGeocodeResponse;
-  } catch {
+    const first = data.results?.[0];
+    console.info("[geocode] response", {
+      clubId,
+      address: name,
+      status: data.status ?? null,
+      errorMessage: data.error_message ?? null,
+      resultsCount: data.results?.length ?? 0,
+      first: first
+        ? {
+            placeId: first.place_id ?? null,
+            formattedAddress: first.formatted_address ?? null,
+            lat: first.geometry?.location?.lat ?? null,
+            lng: first.geometry?.location?.lng ?? null,
+          }
+        : null,
+    });
+  } catch (err) {
+    console.error("[geocode] google api call failed", { clubId, address: name, err });
     return NextResponse.json({ error: "Failed to call Google Geocoding API" }, { status: 502 });
   }
 
   if (!data.results?.length) {
-    upsertGeocodeCacheMissing({ clubId, name });
     return NextResponse.json(
       { error: "No geocoding results", status: data.status ?? null, message: data.error_message ?? null },
       { status: 404 },
@@ -88,15 +88,6 @@ export async function POST(req: Request) {
   if (!loc || typeof loc.lat !== "number" || typeof loc.lng !== "number") {
     return NextResponse.json({ error: "Geocoding result missing lat/lng" }, { status: 502 });
   }
-
-  upsertGeocodeCacheHit({
-    clubId,
-    name,
-    lat: loc.lat,
-    lng: loc.lng,
-    formattedAddress: first.formatted_address ?? null,
-    placeId: first.place_id ?? null,
-  });
 
   return NextResponse.json({
     clubId,
