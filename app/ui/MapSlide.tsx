@@ -31,18 +31,81 @@ function clamp(n: number, min: number, max: number) {
 }
 
 function markerSize(count: number): number {
-  return clamp(10 + count * 3, 10, 28);
+  return clamp(22 + count * 4, 22, 44);
 }
 
 export function MapSlide({ archive }: { archive: Archive }) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<Map<ClubId, { marker: any; count: number }>>(new Map());
+  const popupRef = useRef<any>(null);
   const [status, setStatus] = useState<
     | { kind: "resolving"; done: number; total: number }
     | { kind: "ready" }
     | { kind: "error"; message: string }
   >({ kind: "resolving", done: 0, total: 0 });
+
+  function buildMarkerElement(clubName: string, count: number): HTMLDivElement {
+    const el = document.createElement("div");
+    el.className = "golfMarker";
+    el.style.width = `${markerSize(count)}px`;
+    el.style.height = `${markerSize(count)}px`;
+    el.dataset.count = String(count);
+    el.dataset.name = clubName;
+    el.setAttribute("role", "button");
+    el.setAttribute("aria-label", clubName);
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 64 64");
+    svg.setAttribute("class", "golfMarkerSvg");
+    svg.innerHTML = `
+      <circle cx="32" cy="32" r="27" fill="#ffffff" stroke="rgba(39, 174, 96, 0.95)" stroke-width="6" />
+      <circle cx="24" cy="22" r="3.2" fill="rgba(13, 26, 38, 0.16)" />
+      <circle cx="38" cy="20" r="2.8" fill="rgba(13, 26, 38, 0.14)" />
+      <circle cx="46" cy="30" r="3.0" fill="rgba(13, 26, 38, 0.14)" />
+      <circle cx="18" cy="34" r="3.0" fill="rgba(13, 26, 38, 0.14)" />
+      <circle cx="30" cy="36" r="3.2" fill="rgba(13, 26, 38, 0.14)" />
+      <circle cx="40" cy="42" r="3.0" fill="rgba(13, 26, 38, 0.12)" />
+      <circle cx="24" cy="48" r="2.6" fill="rgba(13, 26, 38, 0.12)" />
+    `;
+    el.appendChild(svg);
+
+    const badge = document.createElement("div");
+    badge.className = "golfMarkerBadge";
+    badge.textContent = count > 1 ? String(count) : "";
+    badge.style.display = count > 1 ? "grid" : "none";
+    el.appendChild(badge);
+
+    return el;
+  }
+
+  function updateMarkerElement(el: HTMLDivElement, clubName: string, count: number) {
+    el.style.width = `${markerSize(count)}px`;
+    el.style.height = `${markerSize(count)}px`;
+    el.dataset.count = String(count);
+    el.dataset.name = clubName;
+    el.setAttribute("aria-label", clubName);
+
+    const badge = el.querySelector<HTMLDivElement>(".golfMarkerBadge");
+    if (badge) {
+      badge.textContent = count > 1 ? String(count) : "";
+      badge.style.display = count > 1 ? "grid" : "none";
+    }
+  }
+
+  function buildPopupContent(clubName: string, count: number): HTMLDivElement {
+    const wrap = document.createElement("div");
+    wrap.className = "golfPopupBanner";
+    const title = document.createElement("div");
+    title.className = "golfPopupTitle";
+    title.textContent = clubName;
+    const meta = document.createElement("div");
+    meta.className = "golfPopupMeta";
+    meta.textContent = `${count} round${count === 1 ? "" : "s"}`;
+    wrap.appendChild(title);
+    wrap.appendChild(meta);
+    return wrap;
+  }
 
   const clubNameById = useMemo(() => {
     const map = new Map<ClubId, string>();
@@ -185,6 +248,14 @@ export function MapSlide({ archive }: { archive: Archive }) {
 
         mapRef.current.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), "top-right");
 
+        popupRef.current = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnClick: false,
+          closeOnMove: false,
+          offset: 18,
+          className: "golfPopup",
+        });
+
         setStatus({ kind: "ready" });
 
         // Animation: iterate through rounds in timestamp order.
@@ -203,27 +274,33 @@ export function MapSlide({ archive }: { archive: Archive }) {
 
           const existing = markersRef.current.get(e.clubId);
           if (!existing) {
-            const el = document.createElement("div");
-            el.style.width = `${markerSize(1)}px`;
-            el.style.height = `${markerSize(1)}px`;
-            el.style.borderRadius = "999px";
-            el.style.background = "rgba(39, 174, 96, 0.95)";
-            el.style.boxShadow = "0 10px 28px rgba(39, 174, 96, 0.28)";
-            el.style.border = "2px solid rgba(255,255,255,0.9)";
-            el.title = e.clubName;
+            const el = buildMarkerElement(e.clubName, 1);
 
-            const marker = new mapboxgl.Marker({ element: el })
+            const marker = new mapboxgl.Marker({ element: el, anchor: "center" })
               .setLngLat([ll.lng, ll.lat])
               .addTo(mapRef.current);
+
+            const onEnter = () => {
+              const popup = popupRef.current;
+              if (!popup) return;
+              const name = el.dataset.name ?? e.clubName;
+              const count = Number(el.dataset.count ?? "1");
+              popup.setLngLat(marker.getLngLat()).setDOMContent(buildPopupContent(name, count)).addTo(mapRef.current);
+            };
+            const onLeave = () => {
+              const popup = popupRef.current;
+              if (!popup) return;
+              popup.remove();
+            };
+            el.addEventListener("mouseenter", onEnter);
+            el.addEventListener("mouseleave", onLeave);
 
             markersRef.current.set(e.clubId, { marker, count: 1 });
           } else {
             const nextCount = existing.count + 1;
             existing.count = nextCount;
             const el = existing.marker.getElement() as HTMLDivElement;
-            const size = markerSize(nextCount);
-            el.style.width = `${size}px`;
-            el.style.height = `${size}px`;
+            updateMarkerElement(el, e.clubName, nextCount);
           }
         }, tickMs);
 
@@ -239,6 +316,17 @@ export function MapSlide({ archive }: { archive: Archive }) {
     return () => {
       cancelled = true;
       try {
+        const popup = popupRef.current;
+        if (popup) popup.remove();
+        popupRef.current = null;
+
+        for (const { marker } of markersRef.current.values()) {
+          try {
+            marker.remove();
+          } catch {
+            // ignore
+          }
+        }
         markersRef.current.clear();
         if (mapRef.current) {
           mapRef.current.remove();
