@@ -37,8 +37,9 @@ function markerSize(count: number): number {
 export function MapSlide({ archive }: { archive: Archive }) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
-  const markersRef = useRef<Map<ClubId, { marker: any; count: number }>>(new Map());
+  const markersRef = useRef<Map<ClubId, { marker: any; count: number; clubName: string; el: HTMLDivElement }>>(new Map());
   const popupRef = useRef<any>(null);
+  const [activeClubId, setActiveClubId] = useState<ClubId | null>(null);
   const [status, setStatus] = useState<
     | { kind: "resolving"; done: number; total: number }
     | { kind: "ready" }
@@ -137,6 +138,32 @@ export function MapSlide({ archive }: { archive: Archive }) {
     }
     return out;
   }, [roundEvents]);
+
+  const roundsByClubId = useMemo(() => {
+    const map = new Map<ClubId, { clubName: string; count: number }>();
+    for (const e of roundEvents) {
+      const existing = map.get(e.clubId);
+      if (!existing) map.set(e.clubId, { clubName: e.clubName, count: 1 });
+      else existing.count += 1;
+    }
+    return map;
+  }, [roundEvents]);
+
+  const legendItems = useMemo(() => {
+    const items = Array.from(roundsByClubId.entries()).map(([clubId, v]) => ({
+      clubId,
+      clubName: v.clubName,
+      count: v.count,
+    }));
+    items.sort((a, b) => b.count - a.count || a.clubName.localeCompare(b.clubName));
+    return items;
+  }, [roundsByClubId]);
+
+  useEffect(() => {
+    for (const [clubId, entry] of markersRef.current.entries()) {
+      entry.el.classList.toggle("golfMarkerActive", Boolean(activeClubId && clubId === activeClubId));
+    }
+  }, [activeClubId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -258,54 +285,35 @@ export function MapSlide({ archive }: { archive: Archive }) {
 
         setStatus({ kind: "ready" });
 
-        // Animation: iterate through rounds in timestamp order.
-        let i = 0;
-        const tickMs = 220;
-        const timer = window.setInterval(() => {
-          if (cancelled) return;
-          if (i >= roundEvents.length) {
-            window.clearInterval(timer);
-            return;
-          }
+        const showCourse = (clubId: ClubId) => {
+          setActiveClubId(clubId);
+          const entry = markersRef.current.get(clubId);
+          const popup = popupRef.current;
+          if (!entry || !popup) return;
+          popup.setLngLat(entry.marker.getLngLat()).setDOMContent(buildPopupContent(entry.clubName, entry.count)).addTo(mapRef.current);
+        };
 
-          const e = roundEvents[i++]!;
-          const ll = coords.get(e.clubId);
-          if (!ll) return;
+        const hideCourse = (clubId: ClubId) => {
+          setActiveClubId((cur) => (cur === clubId ? null : cur));
+          const popup = popupRef.current;
+          if (popup) popup.remove();
+        };
 
-          const existing = markersRef.current.get(e.clubId);
-          if (!existing) {
-            const el = buildMarkerElement(e.clubName, 1);
+        // Render one marker per course, sized by total rounds at that course.
+        for (const item of legendItems) {
+          const ll = coords.get(item.clubId);
+          if (!ll) continue;
 
-            const marker = new mapboxgl.Marker({ element: el, anchor: "center" })
-              .setLngLat([ll.lng, ll.lat])
-              .addTo(mapRef.current);
+          const el = buildMarkerElement(item.clubName, item.count);
+          const marker = new mapboxgl.Marker({ element: el, anchor: "center" })
+            .setLngLat([ll.lng, ll.lat])
+            .addTo(mapRef.current);
 
-            const onEnter = () => {
-              const popup = popupRef.current;
-              if (!popup) return;
-              const name = el.dataset.name ?? e.clubName;
-              const count = Number(el.dataset.count ?? "1");
-              popup.setLngLat(marker.getLngLat()).setDOMContent(buildPopupContent(name, count)).addTo(mapRef.current);
-            };
-            const onLeave = () => {
-              const popup = popupRef.current;
-              if (!popup) return;
-              popup.remove();
-            };
-            el.addEventListener("mouseenter", onEnter);
-            el.addEventListener("mouseleave", onLeave);
+          el.addEventListener("mouseenter", () => showCourse(item.clubId));
+          el.addEventListener("mouseleave", () => hideCourse(item.clubId));
 
-            markersRef.current.set(e.clubId, { marker, count: 1 });
-          } else {
-            const nextCount = existing.count + 1;
-            existing.count = nextCount;
-            const el = existing.marker.getElement() as HTMLDivElement;
-            updateMarkerElement(el, e.clubName, nextCount);
-          }
-        }, tickMs);
-
-        // Cleanup interval on unmount
-        return () => window.clearInterval(timer);
+          markersRef.current.set(item.clubId, { marker, count: item.count, clubName: item.clubName, el });
+        }
       } catch (e) {
         if (cancelled) return;
         setStatus({ kind: "error", message: e instanceof Error ? e.message : "Map failed to load" });
@@ -336,11 +344,22 @@ export function MapSlide({ archive }: { archive: Archive }) {
         // ignore
       }
     };
-  }, [roundEvents, uniqueCourseIdsInOrder]);
+  }, [legendItems, uniqueCourseIdsInOrder]);
+
+  const totalRounds = roundEvents.length;
+  const totalCourses = legendItems.length;
 
   return (
-    <div style={{ display: "grid", gap: 12 }}>
-      <div className="pill">2025 WrappedMap</div>
+    <div className="golfMap">
+      <div className="golfMapHeader">
+        <div className="golfMapTitle">
+          Your <span className="golfMapTitleAccent">Golf Map</span>
+        </div>
+        <div className="golfMapSubtitle">
+          {totalCourses} course{totalCourses === 1 ? "" : "s"} played · {totalRounds} total round{totalRounds === 1 ? "" : "s"}
+        </div>
+        <div className="golfMapHint">Hover over markers or legend items to explore your courses</div>
+      </div>
 
       {status.kind === "resolving" && (
         <div className="muted">
@@ -349,17 +368,70 @@ export function MapSlide({ archive }: { archive: Archive }) {
       )}
       {status.kind === "error" && <div className="muted">Map error: {status.message}</div>}
 
-      <div
-        ref={mapContainerRef}
-        style={{
-          height: 420,
-          width: "100%",
-          borderRadius: 18,
-          overflow: "hidden",
-          border: "1px solid rgba(0,0,0,0.06)",
-          background: "rgba(255,255,255,0.6)",
-        }}
-      />
+      <div className="golfMapLayout">
+        <div className="golfMapCanvasWrap">
+          <div className="golfMapInLegend">
+            <div className="golfMapInLegendRow">
+              <svg className="golfMapInLegendIcon" viewBox="0 0 64 64" aria-hidden="true">
+                <circle cx="32" cy="32" r="27" fill="#ffffff" stroke="rgba(39, 174, 96, 0.95)" strokeWidth="6" />
+                <circle cx="24" cy="22" r="3.2" fill="rgba(13, 26, 38, 0.16)" />
+                <circle cx="38" cy="20" r="2.8" fill="rgba(13, 26, 38, 0.14)" />
+                <circle cx="46" cy="30" r="3.0" fill="rgba(13, 26, 38, 0.14)" />
+              </svg>
+              <div className="golfMapInLegendText">Rounds played</div>
+            </div>
+            <div className="golfMapInLegendSub">Larger markers = more rounds</div>
+          </div>
+
+          <div
+            ref={mapContainerRef}
+            className="golfMapCanvas"
+            style={{
+              background: "rgba(255,255,255,0.6)",
+            }}
+          />
+        </div>
+
+        <div className="golfMapSidebar">
+          <div className="golfMapSidebarTitle">Courses Played</div>
+
+          <div className="golfMapSidebarList">
+            {legendItems.map((item) => {
+              const active = activeClubId === item.clubId;
+              return (
+                <div
+                  key={item.clubId}
+                  className={`golfCourseRow${active ? " golfCourseRowActive" : ""}`}
+                  onMouseEnter={() => {
+                    setActiveClubId(item.clubId);
+                    const entry = markersRef.current.get(item.clubId);
+                    const popup = popupRef.current;
+                    if (entry && popup && mapRef.current) {
+                      popup
+                        .setLngLat(entry.marker.getLngLat())
+                        .setDOMContent(buildPopupContent(entry.clubName, entry.count))
+                        .addTo(mapRef.current);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    setActiveClubId((cur) => (cur === item.clubId ? null : cur));
+                    const popup = popupRef.current;
+                    if (popup) popup.remove();
+                  }}
+                >
+                  <div className="golfCourseRowMain">
+                    <div className="golfCourseRowName">{item.clubName}</div>
+                  </div>
+                  <div className="golfCourseRowCount">
+                    <div className="golfCourseRowCountBadge">{item.count}</div>
+                    <div className="golfCourseRowCountLabel">round{item.count === 1 ? "" : "s"}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

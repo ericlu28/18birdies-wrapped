@@ -365,6 +365,21 @@ body {
   width: 100%;
   height: 100%;
   display: block;
+  transform-origin: 50% 50%;
+  transition: transform 140ms ease, filter 140ms ease;
+}
+
+.golfMarkerActive .golfMarkerSvg {
+  transform: scale(1.08);
+  filter: drop-shadow(0 20px 30px rgba(250, 204, 21, 0.42)) drop-shadow(0 14px 40px rgba(250, 204, 21, 0.22));
+}
+
+.golfMarkerActive .golfMarkerSvg circle:first-child {
+  stroke: rgba(250, 204, 21, 0.98);
+}
+
+.golfMarkerActive .golfMarkerBadge {
+  transform: scale(1.05);
 }
 
 .golfMarkerBadge {
@@ -417,6 +432,193 @@ body {
   font-weight: 800;
   font-size: 12px;
   color: rgba(13, 26, 38, 0.62);
+}
+
+.golfMap {
+  display: grid;
+  gap: 14px;
+}
+
+.golfMapHeader {
+  display: grid;
+  gap: 6px;
+}
+
+.golfMapTitle {
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.golfMapTitleAccent {
+  color: rgba(39, 174, 96, 0.98);
+}
+
+.golfMapSubtitle {
+  font-size: 18px;
+  color: rgba(13, 26, 38, 0.7);
+  font-weight: 700;
+}
+
+.golfMapHint {
+  font-size: 13px;
+  color: rgba(13, 26, 38, 0.48);
+  font-weight: 700;
+}
+
+.golfMapLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 18px;
+  align-items: stretch;
+}
+
+@media (max-width: 980px) {
+  .golfMapLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.golfMapCanvasWrap {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.6);
+  height: 520px;
+}
+
+.golfMapCanvas {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.golfMapInLegend {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+}
+
+.golfMapInLegendRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.golfMapInLegendIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.golfMapInLegendText {
+  font-weight: 800;
+  color: rgba(13, 26, 38, 0.78);
+}
+
+.golfMapInLegendSub {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(13, 26, 38, 0.5);
+}
+
+.golfMapSidebar {
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 520px;
+}
+
+.golfMapSidebarTitle {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.golfMapSidebarList {
+  display: grid;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.golfCourseRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(13, 26, 38, 0.12);
+  background: #fff;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.golfCourseRow:hover {
+  border-color: rgba(39, 174, 96, 0.35);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+}
+
+.golfCourseRowActive {
+  border-color: rgba(250, 204, 21, 0.92);
+  box-shadow: 0 18px 50px rgba(250, 204, 21, 0.18);
+}
+
+.golfCourseRowName {
+  font-weight: 900;
+  color: rgba(13, 26, 38, 0.95);
+  line-height: 1.2;
+}
+
+.golfCourseRowCount {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.golfCourseRowCountBadge {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(39, 174, 96, 0.98);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 14px 34px rgba(39, 174, 96, 0.18);
+}
+
+.golfCourseRowActive .golfCourseRowCountBadge {
+  box-shadow: 0 18px 44px rgba(250, 204, 21, 0.28);
+  outline: 3px solid rgba(250, 204, 21, 0.92);
+  outline-offset: 2px;
+}
+
+.golfCourseRowCountLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(13, 26, 38, 0.5);
 }
 
 .footerNav {
