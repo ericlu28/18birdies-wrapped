@@ -37,9 +37,11 @@ export function Slides({ slides, onReset }: { slides: SlideModel[]; onReset: () 
   const s = slides[clampedIdx];
   if (!s) return null;
 
+  const slideClassName = s.title === "Course map" ? "slide slideTop" : "slide";
+
   return (
     <>
-      <section className="slide" aria-label={s.title}>
+      <section className={slideClassName} aria-label={s.title}>
         {s.body}
       </section>
       <footer className="footerNav">

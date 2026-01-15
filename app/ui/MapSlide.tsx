@@ -268,7 +268,7 @@ export function MapSlide({ archive }: { archive: Archive }) {
 
         mapRef.current = new mapboxgl.Map({
           container: mapContainerRef.current,
-          style: "mapbox://styles/mapbox/light-v11",
+          style: "mapbox://styles/mapbox/streets-v12",
           center: [-98.5795, 39.8283], // USA
           zoom: 3.1,
         });
